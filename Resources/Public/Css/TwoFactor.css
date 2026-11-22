@@ -1,0 +1,407 @@
+/* TYPO3 v13 Two-Factor Authentication Styles */
+
+/* Method Selection Grid */
+.mo-method-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+    .mo-method-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.mo-method-option {
+    cursor: pointer;
+    display: block;
+}
+
+.mo-method-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mo-method-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.mo-method-option input[type="radio"]:checked + .mo-method-card {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.mo-method-card:hover {
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.mo-method-icon {
+    margin-bottom: 1rem;
+    color: #667eea;
+}
+
+.mo-method-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #1a202c;
+}
+
+.mo-method-card p {
+    font-size: 0.875rem;
+    color: #718096;
+    margin: 0;
+}
+
+/* Form Components */
+.mo-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.mo-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.mo-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.mo-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.mo-phone-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mo-country-select {
+    min-width: 100px;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+}
+
+.mo-help-text {
+    display: block;
+    margin-top: 0.25rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* OTP Input Styling */
+.mo-otp-section {
+    margin-bottom: 2rem;
+}
+
+.mo-otp-label {
+    display: block;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+.mo-otp-inputs {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.mo-otp-digit {
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.mo-otp-digit:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: scale(1.05);
+}
+
+.mo-otp-digit:not(:placeholder-shown) {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* Button Styles */
+.mo-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+}
+
+.mo-btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.mo-btn-primary:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.mo-btn-link {
+    background: none;
+    border: none;
+    color: #667eea;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    text-decoration: underline;
+}
+
+.mo-btn-link:hover {
+    color: #5a67d8;
+}
+
+/* Form Options */
+.mo-form-options {
+    margin-bottom: 1.5rem;
+}
+
+.mo-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.mo-checkbox-label input[type="checkbox"] {
+    margin: 0;
+    transform: scale(1.1);
+}
+
+.mo-form-actions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Authenticator Specific Styles */
+.mo-authenticator-setup {
+    margin-bottom: 2rem;
+}
+
+.mo-qr-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.mo-qr-code {
+    margin-bottom: 1rem;
+}
+
+.mo-qr-code img {
+    max-width: 200px;
+    height: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.mo-secret-key label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.mo-key-display {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.mo-key-display code {
+    background: #f3f4f6;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.875rem;
+}
+
+.mo-copy-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.mo-setup-steps {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.mo-setup-steps ol {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.mo-setup-steps li {
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+/* Help Modal */
+.mo-help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.mo-help-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.mo-help-content h3 {
+    margin: 0 0 1rem 0;
+    color: #1a202c;
+}
+
+.mo-help-content p {
+    margin: 0 0 1.5rem 0;
+    color: #6b7280;
+}
+
+.mo-help-content button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .mo-2fa-card {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .mo-otp-inputs {
+        gap: 0.5rem;
+    }
+    
+    .mo-otp-digit {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+    
+    .mo-phone-input {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .mo-country-select {
+        min-width: auto;
+    }
+}
+
+/* Flash Messages */
+.mo-flash-messages {
+    margin-bottom: 1rem;
+}
+
+.mo-flash-message {
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.mo-flash-message.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.mo-flash-message.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+/* Loading States */
+.mo-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.mo-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    color: white;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

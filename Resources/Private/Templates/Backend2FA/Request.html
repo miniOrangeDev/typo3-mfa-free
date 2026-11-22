@@ -1,0 +1,1220 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
+<f:section name="title">
+typo3-2fa
+</f:section>
+<f:section name="head">
+    <!-- Additional head content can be added here if needed -->
+    <f:asset.script identifier="adminuserManagement-script" src="EXT:mfa/Resources/Public/JavaScript/adminuserManagement.js" />
+</f:section>
+
+<f:section name="content">
+    <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+
+    <f:if condition="{transactionLimitExceeded}">
+        <div class="transaction-limit-banner" role="alert">
+            <strong>Transaction limit has been exceeded. Please contact <a href="mailto:magentosupport@xecurify.com">magentosupport@xecurify.com</a> to continue your services.</strong>
+        </div>
+    </f:if>
+
+    <f:if condition="{0: status} == {0: 'not_logged'}">
+        <div class="account-login-notice" role="status">
+            <strong>Please Login/Register with your miniOrange account to configure the miniOrange Typo3 2FA plugin.</strong>
+        </div>
+    </f:if>
+
+    <!-- Tab Navigation -->
+    <div class="tab">
+        <button class="tablinks button" id="Account_Tab">Account</button>
+        <button class="tablinks button" id="Twofa_Setting_Tab" onclick="removeFlashMessage(); openTab('Twofa_Setting')" style="margin-left: 3%;">2FA Configuration</button>
+        <!-- <button id="Support_Tab" class="tablinks button" onclick="removeFlashMessage(); openTab('Support')">Support</button> -->
+        <button class="tablinks button" id="User_Management_Tab" onclick="removeFlashMessage(); openTab('User_Management')" style="margin-left: 3%;">User Management</button>
+        <button class="tablinks button" id="Upgrade_Manager_Tab" onclick="removeFlashMessage(); openTab('Upgrade_Manager')" style="margin-left: 3%;">Upgrade</button>
+        <!-- <button class="tablinks button" id="Custom_Gateway_Tab" onclick="removeFlashMessage(); openTab('Custom_Gateway')" style="margin-left: 3%;">Custom Gateway</button> -->
+    </div>
+
+    <input hidden id="taby" name="taby" value="{tab}">
+
+
+    <f:comment>
+        <!--   ACCOUNT TAB-->
+    </f:comment>
+    <div class="tabcontent" id="Account" style="margin-left: 20px">
+
+        <div id="topContainer">
+
+            <f:comment>
+                <!--Left Container-->
+            </f:comment>
+    
+            <div id="leftContainer">
+                 <!--    IF USER NOT LOGGED IN -->
+            <f:if condition="{0: status} == {0: 'not_logged'}">
+                <form id="account_form" method="post" name="account">
+                    <input name="option" type="hidden" value="mo_oidc_verify_customer"/>
+
+                    
+                    <div class="panel_toggle" id="toggle2">
+                        <h3>Login with miniOrange</h3>
+                    </div>
+                    <hr>
+                    <div>
+                        <input id="proxy" name="proxy" type="checkbox" value="isChecked"/><b>
+                        Is Proxy Server</b><br>
+                        <br>
+                    </div>
+
+                    <div id="proxyEnabledDiv" style="display: none;">
+                        <label color="#FF0000">Proxy Hostname: <span class="premiumMessage"> * </span></label>
+                        <input class="form-control" name="proxy_host_name" placeholder="Enter Proxy host name"
+                               type="text"/>
+
+                        <br>
+
+                        <label color="#FF0000">Port number: <span class="premiumMessage"> * </span></label>
+                        <input class="form-control" name="port_number" placeholder="Enter Port Number"
+                               type="text"/>
+
+                        <br>
+
+                        <label color="#FF0000">Proxy Username: <span class="premiumMessage"> * </span></label>
+                        <input class="form-control" name="proxy_username" placeholder="Enter Proxy Username"
+                               type="text"/>
+
+                        <br>
+
+                        <label color="#FF0000">Proxy Password: <span class="premiumMessage"> * </span></label>
+                        <input class="form-control" name="proxy_password" placeholder="Enter Proxy password"
+                               type="password"/>
+                        <hr>
+                    </div>
+                    <div class="" id="panel1" style="height: 70% ; ">
+                        <p style=""><b>Please enter your miniOrange email and password.<br/>
+                            <a href="https://login.xecurify.com/moas/idp/resetpassword" target="_blank">Click
+                                here if you forgot your password?</a></b>
+                        </p>
+                        <br>
+                        <div class="col-lg-8 tile" style="height: fit-content">
+                            <label color="#FF0000">Email: <span class="premiumMessage"> * </span></label>
+                            <input class="form-control" name="email" placeholder="person@example.com" type="email"
+                                   value=" "/>
+                            <br>
+                            <label color="#FF0000">Password: <span class="premiumMessage"> * </span></label>
+                            <input class="form-control" minlength="6" name="password"
+                                   pattern="^[(\w)*(!@#$.%^&*-_)*]+$" placeholder="Enter your password" title="Minimum 6 characters should be present. Maximum 15 characters should be present. Only following symbols (!@#.$%^&*) should be present."
+                                   type="password"/>
+                            <br>
+                            <button class="btn btn-primary" id="submit" name="submit" onClick="jQuery('#account_form').submit();"
+                                    type="submit">Login
+                            </button>
+
+                            <a href="https://www.miniorange.com/businessfreetrial" target="_blank" class="btn btn-secondary" style="margin-left: 10px;">Register</a>
+                        </div>
+                    </div>
+                </form>
+            </f:if>
+
+            <!--    IF  USER LOGGED IN - SHOW ACCOUNT INFORMATION -->
+            <f:if condition="{0: status} == {0: 'logged'}">
+                <div class="panel_toggle" id="toggle4">
+                    <h3><strong>miniOrange Account Information</strong></h3>
+                </div>
+                <hr>
+                <div class="tile">
+                    <table class="profileTable">
+                        <tr>
+                            <td><strong>miniOrange Account Email : </strong></td>
+                            <td>{email}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer ID : </strong></td>
+                            <td>{key}</td>
+                        </tr>
+                        <f:if condition="{sms_email_detail.status} == 'SUCCESS'">
+                            <tr>
+                                <td><b>Remaining SMS</b></td>
+                                <td>{sms_email_detail.smsRemaining}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Remaining Emails</b></td>
+                                <td>{sms_email_detail.emailRemaining}</td>
+                            </tr>
+                        </f:if>
+                    </table>
+
+                    &nbsp
+
+                    <!--   LOGOUT ACCOUNT -->
+                    <form action="" id="log_out_form" method="post" name="log_out_form">
+                        <input name="option" type="hidden" value="logout">
+                        <input class="btn btn-primary" name="submit" onclick="jQuery('#log_out_form').submit();" type="submit"
+                               value="Log out"/>
+                    </form>
+                </div>
+            </f:if>
+
+
+            </div>
+
+            <f:comment>
+                <!--Right Container-->
+            </f:comment>
+            <div id="rightContainer">
+                <div class="tabcontent" id="Support">
+                    <h3><strong>Support</strong></h3>
+                    <hr>
+                    &nbsp;
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="tile">
+                                <div class="row ">
+                                    <div class="col-lg-10">
+                                        <form action="" method="post" id="support_form">
+                                            <p><b>Need any help? Just send us a query and we will get back to you soon.</b>
+                                            </p>
+                                            <input name="option" type="hidden" value="mo_oidc_contact_us_query_option"/>
+                                            &nbsp;
+                                            <div class="form-group">
+                                                <input class="form-control" id="support_email" name="mo_oidc_contact_us_email" placeholder="Enter your email"
+                                                       type="email" value="{email}" required>
+                                            </div>
+        
+                                            <div class="form-group">
+                                                <input class="form-control" id="support_phone" name="mo_oidc_contact_us_phone" placeholder="Enter your phone number for phone support [optional]"
+                                                       type="tel">
+                                            </div>
+        
+                                            <div class="form-group">
+                                                    <textarea class="form-control" id="support_query" name="mo_oidc_contact_us_query" placeholder="Enter your query here"
+                                                              rows="6" required></textarea>
+                                            </div>
+                                            <div class="tile-footer" style="text-align:left">
+                                                <button class="btn btn-primary" id="support_submit_btn" name="submit" type="submit">Submit</button>
+                                            </div>
+        
+                                            <br>
+                                            <!-- Response message container -->
+                                            <div id="support_response" class="alert" style="display: none;"></div>
+        
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <f:comment>
+        <!-- Twofa Configuration TAB-->
+    </f:comment>
+    <div class="tabcontent" id="Twofa_Configuration">
+        <!-- print tab -->
+                <!-- Configure 2FA content goes here -->
+                <div class="main-content">
+                    <div class="container">
+                        <div class="card">
+                            <h1 class="card-title">Two-Factor Authentication Setup</h1>
+                            <p class="card-description">Choose who you want to configure 2FA settings for:</p>
+                            <div class="grid">
+                                <!-- Customer Configuration Card -->
+                                <div class="selection-card" id="customer_configuration_card" data-tab="Customer_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                🧑🏻‍💼
+                                            </div>
+                                            <h3 class="card-subtitle">Customer 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Configure two-factor authentication settings for customers on the Main Website.</p>
+                                </div>
+                                <!-- Admin Configuration Card -->
+                                <div class="selection-card" id="admin_configuration_card" data-tab="Admin_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                🤖
+                                            </div>
+                                            <h3 class="card-subtitle">Admin 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Set up two-factor authentication rules and policies for administrative users and staff.</p>
+                                </div>
+                            </div>
+                            <div class="guide-section">
+                                <h4 class="guide-title">Quick Guide</h4>
+                                <ol class="guide-list">
+                                    <li>Select either Customer or Admin 2FA configuration</li>
+                                    <li>Configure authentication methods and rules on the next screen</li>
+                                    <li>Review and manage all configurations in the central dashboard</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+    
+    
+    <f:comment>
+        <!-- Twofa Setting TAB-->
+    </f:comment>
+    <div class="tabcontent" id="Twofa_Setting_Choose">
+
+                <!-- Configure 2FA content goes here -->
+                <div class="main-content">
+                    <div class="container">
+                        <div class="card">
+                            <h1 class="card-title">Two-Factor Authentication Setup</h1>
+                            <p class="card-description">Choose who you want to configure 2FA settings for:</p>
+                            <div class="grid">
+                                <!-- Customer Configuration Card -->
+                                <div class="selection-card" id="customer_configuration_card" data-tab="Customer_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                <div class="icon-wrapper-img">🧑🏻‍💼</div>
+                                            </div>
+                                            <h3 class="card-subtitle">Customer 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Configure two-factor authentication settings for customers on the Main Website.</p>
+                                </div>
+                                <!-- Admin Configuration Card -->
+                                <div class="selection-card" id="admin_configuration_card" data-tab="Admin_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                <div class="icon-wrapper-img">🛡️</div>
+                                            </div>
+                                            <h3 class="card-subtitle">Admin 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Set up two-factor authentication rules and policies for administrative users and staff.</p>
+                                </div>
+                            </div>
+                            <div class="guide-section">
+                                <h4 class="guide-title">Quick Guide</h4>
+                                <ol class="guide-list">
+                                    <li>Select either Customer or Admin 2FA configuration</li>
+                                    <li>Configure authentication methods and rules on the next screen</li>
+                                    <li>Review and manage all configurations in the central dashboard</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+    </div>
+
+
+    <f:comment>
+        <!-- Twofa Setting TAB-->
+    </f:comment>
+    <div class="tabcontent" id="Twofa_Setting">
+        <!-- print tab -->
+        <f:if condition="{checkTwofaRules}">
+            <f:then>
+                <div id="existing2faRulesSection">
+                    <div class="main-content">
+                        <div class="container">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h1 class="card-title">Existing 2FA Rules</h1>
+                                    <form action="" method="post" id="customer2faForm" name="customer2faForm">
+                                        <input type="hidden" name="option" value="add_new_rule" />
+                                        <button class="btn btn-primary" id="customer_configuration_card" style="background: #eb5202; border: none; font-weight: bold; border-radius: 6px; padding: 10px 18px;" {log}>
+                                            + New Rule
+                                        </button>
+                                    </form>
+                                </div>
+                                <p class="card-description">Manage and review your existing 2FA rules below. You can add, edit, or remove rules as needed.</p>
+                                <div>
+                                    <div class="">
+                                        <div style="margin-top: 18px;">
+                                            <table style="width: 100%; border-collapse: collapse; background: #fff;">
+                                                <thead style="background: #f1f3f6;">
+                                                    <tr>
+                                                        <th style="padding: 12px;">Type</th>
+                                                        <th>Website</th>
+                                                        <th>Methods</th>
+                                                        <th>TimeStamp</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <f:for each="{twofaRules}" as="rule">
+                                                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                                                            <td style="padding: 12px;">{rule.type}</td>
+                                                            <td>{rule.website}</td>
+                                                            <td>
+                                                                <f:for each="{rule.methods}" as="method">
+                                                                    <span class="method-pill" style="display: inline-flex; align-items: center; background: #f3f4f6; border-radius: 6px; padding: 10px 10px; margin: 2px 4px 2px 0; font-size: 1.4rem;">
+                                                                        <f:switch expression="{method}">
+                                                                            <f:case value="EMAIL">✉ OTP over Email</f:case>
+                                                                            <f:case value="SMS">✆ OTP over SMS</f:case>
+                                                                            <f:case value="GOOGLE">📱Google Authenticator</f:case>
+                                                                            <f:case value="MICROSOFT">📱Microsoft Authenticator</f:case>
+                                                                            <f:case value="SMS_EMAIL">✆ Email + SMS</f:case>
+                                                                            <f:case value="WHATSAPP">✆ WhatsApp</f:case>
+                                                                            <f:defaultCase>{method}</f:defaultCase>
+                                                                        </f:switch>
+                                                                    </span>
+                                                                </f:for>
+                                                            </td>
+                                                            <td>{rule.last_updated}</td>
+                                                            <td style="position: relative;">
+
+                                                                
+                                                                <div class="action-menu-container">
+                                                                    <button type="button" class="action-menu-btn" data-id="{rule.id}">
+                                                                        ⋮
+                                                                    </button>
+                                                                    <div class="action-menu">
+                                                                        <form action="" method="post" id="customer2faForm">
+                                                                            <input type="hidden" name="option" value="edit_customer_2fa_settings" />
+                                                                            <input type="hidden" name="rule_id" value="{rule.id}" />
+                                                                            <input type="hidden" name="rule_type" value="{rule.type}" />
+
+                                                                            <!-- Edit Button -->
+                                                                            <button type="submit" id="addRuleBtn" class="action-menu-item edit-action" data-id="{rule.id}">
+                                                                                ✎ Edit
+                                                                            </button>
+
+                                                                           
+                                                                        </form>
+                                                                        <form action="" method="post" id="customer2faForm">
+                                                                            <input type="hidden" name="option" value="delete_customer_2fa_rule" />
+                                                                            <input type="hidden" name="rule_id" value="{rule.id}" />
+                                                                            <button type="submit" id="addRuleBtn" class="action-menu-item delete-action" data-id="{rule.id}">
+                                                                                🗑 Delete
+                                                                            </button>
+                                                                        </form>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </f:for>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="guide-section">
+                                    <h4 class="guide-title">Quick Guide</h4>
+                                    <ol class="guide-list">
+                                        <li>Review your existing 2FA rules in the table above</li>
+                                        <li>Click "+ New Rule" to add a new 2FA configuration</li>
+                                        <li>Use the action menu to edit or delete existing rules</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="add2faRuleSection" style="display: none;">
+                    <!-- Place your 2FA rule creation form here. For now, we use the original 2fa content as a placeholder. -->
+                    <div class="main-content">
+                        <div class="container">
+                            <div class="card">
+                                <h1 class="card-title">Add 2FA Rule</h1>
+                                <!-- BEGIN: 2fa content (copy your form here) -->
+                                <!-- ... 2fa content ... -->
+                                <button class="btn btn-secondary" onclick="showExistingRules()">Cancel</button>
+                                <!-- END: 2fa content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </f:then>
+            <f:else>
+                <!-- Configure 2FA content goes here -->
+                <div class="main-content">
+                    <div class="container">
+                        <div class="card">
+                            <h1 class="card-title">Two-Factor Authentication Setup</h1>
+                            <p class="card-description">Choose who you want to configure 2FA settings for:</p>
+                            <div class="grid">
+                                <!-- Customer Configuration Card -->
+                                <div class="selection-card" id="customer_configuration_card" data-tab="Customer_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                <div class="icon-wrapper-img">🧑🏻‍💼</div>
+                                            </div>
+                                            <h3 class="card-subtitle">Customer 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Configure two-factor authentication settings for customers on the Main Website.</p>
+                                </div>
+                                <!-- Admin Configuration Card -->
+                                <div class="selection-card" id="admin_configuration_card" data-tab="Admin_Configuration">
+                                    <div class="card-header">
+                                        <div class="icon-title-group">
+                                            <div class="icon-wrapper">
+                                                <div class="icon-wrapper-img">🛡️</div>
+                                            </div>
+                                            <h3 class="card-subtitle">Admin 2FA</h3>
+                                        </div>
+                                        >
+                                    </div>
+                                    <p class="card-text">Set up two-factor authentication rules and policies for administrative users and staff.</p>
+                                </div>
+                            </div>
+                            <div class="guide-section">
+                                <h4 class="guide-title">Quick Guide</h4>
+                                <ol class="guide-list">
+                                    <li>Select either Customer or Admin 2FA configuration</li>
+                                    <li>Configure authentication methods and rules on the next screen</li>
+                                    <li>Review and manage all configurations in the central dashboard</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </f:else>
+        </f:if>
+    </div>
+
+
+    <f:comment>
+        <!-- customer configuration tab-->
+    </f:comment>
+    <div class="tabcontent" id="Customer_Configuration">
+        <!-- Main Content -->
+        <div class="main-content">
+
+
+            <div class="container">
+                
+                <div class="card">
+                    <h1 class="card-title">
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                Edit Two-Factor Authentication Rule
+                            </f:then>
+                            <f:else>
+                                Two-Factor Authentication Setup
+                            </f:else>
+                        </f:if>
+
+                    </h1>
+                    <p class="card-description">
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                Modify the authentication methods for this rule:
+                            </f:then>
+                            <f:else>
+                                Choose who you want to configure 2FA settings for:
+                            </f:else>
+                        </f:if>
+                        
+                    </p>
+
+                    <!-- Rule Configuration Section -->
+                    <form action="" method="post" id="customer2faForm">
+                    <div class="rule-section">
+                        <h3 class="section-title">
+                            <f:if condition="{editMode}">
+                                <f:then>
+                                    Edit Rule
+                                </f:then>
+                                <f:else>
+                                    Create New Rule
+                                </f:else>
+                            </f:if>
+                            
+                        </h3>
+                        <div class="">
+                            <div class="form-group">
+                                <label class="section-title" for="siteSelect">Site</label>
+                                <input
+                                    type="text"
+                                    class="form-control site-select-readonly"
+                                    id="siteSelect"
+                                    value="Main Website"
+                                    disabled="disabled"
+                                    readonly="readonly"
+                                    aria-label="Main Website"
+                                >
+                            </div>
+                        </div>
+                        <div class="auth-methods">
+                            <h4 class="section-title">Required Authentication Methods</h4>
+                            <div id="authMethodsList">
+                                <div class="auth-method-item">
+                                    <span>OTP over Email</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="EMAIL" 
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'EMAIL'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over SMS</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="SMS"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'SMS'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over SMS + Email <span class="auth-method-premium">[<a href="https://plugins.miniorange.com/typo3-two-factor-authentication-2fa#pricing" target="_blank">Premium</a>]</span></span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="SMS_EMAIL" disabled="disabled"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'SMS_EMAIL'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over WhatsApp <span class="auth-method-premium">[<a href="https://plugins.miniorange.com/typo3-two-factor-authentication-2fa#pricing" target="_blank">Premium</a>]</span></span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="WHATSAPP" disabled="disabled"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'WHATSAPP'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>Google Authenticator</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="GOOGLE"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'GOOGLE'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>Microsoft Authenticator</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="MICROSOFT"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'MICROSOFT'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                
+                            </div>
+                        </div>
+
+                        <!-- OTP Length Configuration Section -->
+                        <div class="otp-length-section">
+                            <h4 class="section-title">OTP Configuration</h4>
+                            <div class="">
+                                <div class="form-group">
+                                    <label for="customerOtpLength">OTP Length</label>
+                                    <select class="form-control" id="customerOtpLength" name="otpLength">
+                                        <option value="6" <f:if condition="{editMode}"><f:if condition="{otpLength} == 6">selected</f:if></f:if>>6 digits</option>
+                                        <option value="5" <f:if condition="{editMode}"><f:if condition="{otpLength} == 5">selected</f:if></f:if>>5 digits</option>
+                                        <option value="4" <f:if condition="{editMode}"><f:if condition="{otpLength} == 4">selected</f:if></f:if>>4 digits</option>
+                                        <option value="3" <f:if condition="{editMode}"><f:if condition="{otpLength} == 3">selected</f:if></f:if>>3 digits</option>
+                                    </select>
+                                    <div class="form-note">
+                                        <strong>💡Important:</strong> Please ensure that the OTP length configured in your miniOrange portal matches the length selected here. 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                <input type="hidden" name="option" value="update_2fa_settings" />
+                                <input type="hidden" name="rule_id" value="{editRuleId}" />
+                                <input type="hidden" name="rule_type" value="{editRuleType}" />
+                                <input type="hidden" name="rule_id" value="{editRuleId}" />
+
+                                <button id="updateRuleBtn" class="btn{f:if(condition: ruleActionDisabled, then: '', else: ' btn-primary')}" type="submit" {ruleActionDisabled}>Update Rule</button>
+                            </f:then>
+                        <f:else>
+                            <input type="hidden" name="option" value="save_customer_2fa_settings" />
+                            <button id="addRuleBtn" class="btn" type="submit" {ruleActionDisabled}>Add Rule</button>
+                        </f:else>
+                        </f:if>
+                    </div>
+                    </form>
+        
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
+    <f:comment>
+        <!-- admin configuration tab-->
+    </f:comment>
+    <div class="tabcontent" id="Admin_Configuration">
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <div class="container">
+                <div class="card">
+                    <h1 class="card-title">
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                Edit Admin Two-Factor Authentication Rule
+                            </f:then>
+                            <f:else>
+                                Two-Factor Authentication Setup
+                            </f:else>
+                        </f:if>
+                    </h1>
+                    <p class="card-description">
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                Modify the authentication methods for this admin rule:
+                            </f:then>
+                            <f:else>
+                                Choose who you want to configure 2FA settings for:
+                            </f:else>
+                        </f:if>
+                    </p>
+
+                    <form action="" method="post" id="admin2faForm">
+                    <!-- Rule Configuration Section -->
+                    <div class="rule-section">
+                        <h3 class="section-title">
+                            <f:if condition="{editMode}">
+                                <f:then>
+                                    Edit Admin Rule
+                                </f:then>
+                                <f:else>
+                                Create New Rule
+                                </f:else>
+                            </f:if>
+                        </h3>
+
+                        <div class="">
+                            <input type="hidden" name="site" value="all" />
+                        </div>
+        
+                        <div class="auth-methods">
+                            <h4 class="section-title">Required Authentication Methods</h4>
+                            <div id="authMethodsList">
+                                <div class="auth-method-item">
+                                    <span>OTP over Email</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="EMAIL" 
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'EMAIL'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over SMS</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="SMS"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'SMS'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over SMS + Email <span class="auth-method-premium">[<a href="https://plugins.miniorange.com/typo3-two-factor-authentication-2fa#pricing" target="_blank">Premium</a>]</span></span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="SMS_EMAIL" disabled="disabled"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'SMS_EMAIL'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>OTP over WhatsApp <span class="auth-method-premium">[<a href="https://plugins.miniorange.com/typo3-two-factor-authentication-2fa#pricing" target="_blank">Premium</a>]</span></span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="WHATSAPP" disabled="disabled"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'WHATSAPP'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>Google Authenticator</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="GOOGLE"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'GOOGLE'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="auth-method-item">
+                                    <span>Microsoft Authenticator</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="methods[]" value="MICROSOFT"
+                                               <f:if condition="{editMode}">
+                                                   <f:for each="{editRule.methods}" as="method">
+                                                       <f:if condition="{method} == 'MICROSOFT'">checked</f:if>
+                                                   </f:for>
+                                               </f:if>
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OTP Length Configuration Section -->
+                        <div class="otp-length-section">
+                            <h4 class="section-title">OTP Configuration</h4>
+                            <div class="">
+                                <div class="form-group">
+                                    <label for="otpLength">OTP Length</label>
+                                    <select class="form-control" id="otpLength" name="otpLength">
+                                        <option value="6" <f:if condition="{editMode}"><f:if condition="{otpLength} == 6">selected</f:if></f:if>>6 digits</option>
+                                        <option value="5" <f:if condition="{editMode}"><f:if condition="{otpLength} == 5">selected</f:if></f:if>>5 digits</option>
+                                        <option value="4" <f:if condition="{editMode}"><f:if condition="{otpLength} == 4">selected</f:if></f:if>>4 digits</option>
+                                        <option value="3" <f:if condition="{editMode}"><f:if condition="{otpLength} == 3">selected</f:if></f:if>>3 digits</option>
+                                    </select>
+                                    <div class="form-note">
+                                        <i class="fa fa-info-circle"></i>
+                                        <strong>Important:</strong> Please ensure that the OTP length configured in your miniOrange portal matches the length selected here. 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <f:if condition="{editMode}">
+                            <f:then>
+                                <input type="hidden" name="option" value="update_2fa_settings" />
+                                <input type="hidden" name="rule_id" value="{editRuleId}" />
+                                <input type="hidden" name="rule_type" value="{editRuleType}" />
+                                <button id="updateRuleBtn" class="btn{f:if(condition: ruleActionDisabled, then: '', else: ' btn-primary')}" type="submit" {ruleActionDisabled}>Update Rule</button>
+                            </f:then>
+                            <f:else>
+                                <input type="hidden" name="option" value="save_admin_2fa_settings" />
+                                <button id="addRuleBtn" class="btn" {ruleActionDisabled}>Add Rule</button>
+                            </f:else>
+                        </f:if>
+                    </div>
+
+                    </form>
+        
+                    
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+
+    <f:comment>
+        <!-- User management configuration tab-->
+    </f:comment>
+    <style>
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+    </style>
+    <div class="tabcontent" id="User_Management">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="card">
+                    <h1 class="card-title">User Management</h1>
+                    <p class="card-description">Manage and Monitor Configured 2fa Users:</p>
+                    
+                                         <!-- Top Controls -->
+                     <div class="row" style="margin-bottom: 3rem;">
+                         <div class="col-md-6">
+                             <div style="display: flex; align-items: baseline;gap: 1rem;">
+                                 <label for="entries" style="margin-right: 0.5rem;">Show</label>
+                                 <select id="entries" class="form-select form-select-sm" style="width: auto; margin-right: 0.5rem;">
+                                     <option value="10" selected>10</option>
+                                     <option value="25">25</option>
+                                     <option value="500">500</option>
+                                     <option value="all">All</option>
+                                 </select>
+                                 <span>entries</span>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div style="display: flex; justify-content: flex-end;">
+                                 <div class="input-group">
+                                     <input type="text" id="searchInput" class="form-control" placeholder="Search users..." value="{search}">
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Action Dropdown -->
+                     <div class="row" style="margin-bottom: 3rem;">
+                         <div class="col-md-6">
+                             <div style="display: flex; align-items: center;">
+                                 <select id="bulkAction" class="form-select form-select-sm" style="width: 50%; margin-right: 0.5rem;">
+                                     <option value="">Action</option>
+                                     <option value="reset">Reset 2FA</option>
+                                     <option value="disable">Disable 2FA</option>
+                                 </select>
+                             </div>
+                         </div>
+                     </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Website</th>
+                                    <th>Role</th>
+                                    <th>2FA Method</th>
+                                    <th>2FA Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <f:if condition="{users}">
+                                    <f:for each="{users}" as="user">
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" class="user-checkbox" value="{user.id}">
+                                            </td>
+                                            <td>
+                                                <div style="display: flex; align-items: center;">
+                                                    <span><f:format.htmlspecialchars>{user.username}</f:format.htmlspecialchars></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="display: flex; align-items: center;">
+                                                    <span><f:format.htmlspecialchars>{user.email}</f:format.htmlspecialchars></span>
+                                                </div>
+                                            </td>
+                                            <td>{user.website}</td>
+                                            <td>
+                                                <span class="badge bg-primary">{user.role}</span>
+                                            </td>
+                                            <td>
+                                                {user.method}
+                                            </td>
+                                            <td>
+                                                <f:if condition="{user.disable_2fa} == 1">
+                                                    <span class="badge bg-danger">Disabled</span>
+                                                </f:if>
+                                                <f:if condition="{user.disable_2fa} == 0">
+                                                    <span class="badge bg-success">Enabled</span>
+                                                </f:if>
+                                            </td>
+                                            <td>
+                                                <form action="" id="reset2faForm" name="reset2faForm" method="post">
+                                                    <input type="hidden" name="user_id" value="{user.id}">
+                                                    <input type="hidden" name="option" value="bulk_reset_2fa">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Reset 2FA - Remove user from 2FA system" onclick="return confirm('Are you sure you want to reset 2FA for this user? This will remove them from the 2FA system.')">
+                                                        <span style="font-size: 14px; font-weight: bold;">🗑</span>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </f:for>
+                                </f:if>
+                                <f:if condition="{users -> f:count()} == 0">
+                                                                         <tr>
+                                         <td colspan="8" style="text-align: center; padding: 2rem 0;">
+                                             <i style="color: #6c757d; margin-bottom: 1rem;font-size: 4rem;">👥</i>
+                                             <p style="color: #6c757d;">No 2FA users found</p>
+                                         </td>
+                                     </tr>
+                                </f:if>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Info -->
+                    <div class="row" style="margin-top: 3rem;">
+                        <div class="col-md-6">
+                            <p class="pagination-info" style="color: #6c757d;">
+                                <f:if condition="{totalUsers} > 0">
+                                    Showing {startEntry} to {endEntry} of {totalUsers} entries
+                                </f:if>
+                                <f:if condition="{totalUsers} == 0">
+                                    No entries to show
+                                </f:if>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <nav aria-label="Page navigation" id="paginationNav">
+                                <ul class="pagination" style="justify-content: flex-end;">
+                                    <!-- Previous Button -->
+                                    <li class="page-item">
+                                        <span class="page-link">Previous</span>
+                                    </li>
+
+                                    <!-- Page Numbers -->
+                                    <li class="page-item active">
+                                        <span class="page-link">1</span>
+                                    </li>
+
+                                    <!-- Next Button -->
+                                    <li class="page-item">
+                                        <span class="page-link">Next</span>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+
+
+    <f:comment>
+        <!-- Custom Gateway TAB-->
+    </f:comment>
+    <div class="tabcontent" id="Upgrade_Manager">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container_upgrade">
+                <div class="main-panel_upgrade background_gray">
+                    <div class="panel-content">
+                        <!-- Upgrade Banner -->
+                        <div class="upgrade-banner">
+                            <div class="plan-info">
+                                <div class="plan-status">Current Plan</div>
+                                <div class="panel-title_report">{planName} <span
+                                    class="plan-version">{pluginVersion}</span></div>
+                            </div>
+                            <div class="upgrade-action">
+                                <a href="https://plugins.miniorange.com/typo3-two-factor-authentication-2fa#pricing"
+                                   target="_blank" class="btn btn-primary" style="font-size:1.4rem">
+                                     Click Here to Upgrade
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Products -->
+                    <div class="main-panel">
+                        <div class="panel-header">
+                            <div class="panel-title-container">
+                                <h2 class="panel-title">Related Products</h2>
+                                <p class="panel-subtitle">Enhance your Magento store with our complementary extensions</p>
+                            </div>
+                            <div class="panel-actions">
+                                <a href="https://plugins.miniorange.com/typo3" target="_blank" class="btn btn-outline btn_secondary" style="color: var(--primary) !important;border: 1px solid var(--primary) !important;background: white !important;">
+                                    🔍︎ View All Products
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="panel-content">
+                            <div class="products-grid">
+                                <!-- Product 1 -->
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Images/sso.png')}" alt="miniOrange SSO" style="max-width: 100%;
+                                        max-height: 100%;
+                                        object-fit: contain;">
+                                    </div>
+                                    <div class="product-details">
+
+                                        <h3 class="product-title">Single Sign On</h3>
+                                        
+                                        <p class="product-description">Login into TYPO3 using any Third Party Identity Provider User credentials</p>
+                                        <div class="product-actions">
+                                            <a href="https://extensions.typo3.org/extension/miniorange_saml" target="_blank" class="btn btn-primary position">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product 2 -->
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Images/icon_mo.png')}" alt="miniOrange SAML IDP" style="max-width: 100%;
+                                        max-height: 100%;
+                                        object-fit: contain;">
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">SAML IDP</h3>
+                                        
+                                        <p class="product-description">Login into any third party applications using Magento credentials.</p>
+                                        <div class="product-actions">
+                                            <a href="https://extensions.typo3.org/extension/idp" target="_blank" class="btn btn-primary position">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product 3 -->
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Images/icon_mo.png')}" alt="miniOrange Keycloak" style="max-width: 100%;
+                                        max-height: 100%;
+                                        object-fit: contain;">
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">Keycloak</h3>
+                                        
+                                        <p class="product-description">Login into TYPO3 using Keycloak User credentials</p>
+                                        <div class="product-actions">
+                                            <a href="https://extensions.typo3.org/extension/keycloak_sso" target="_blank" class="btn btn-primary position">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product 4 -->
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Images/icon_mo.png')}" alt="miniOrange Auth0" style="max-width: 100%;
+                                        max-height: 100%;
+                                        object-fit: contain;">
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">Auth0</h3>
+                                        
+                                        <p class="product-description">Login into TYPO3 using Auth0 User credentials</p>
+                                        <div class="product-actions">
+                                            <a href="https://extensions.typo3.org/extension/auth0_sso" target="_blank" class="btn btn-primary position">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="support-icon" id="openSupportForm">
+            <!-- <i class="fa-solid fa-envelope" style="color:white"></i> -->
+            <img src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Images/icon_mo.png')}"
+                 alt="miniOrange" class="support-icon-img">
+        </div>
+        
+        <div id="help" class="help-container" style="display: none;">
+                            <span class="span1">
+                                <div class="need">
+                                    <span class="span2"></span>
+                                    <div class="div11">
+                                        <div class="div12">
+                                            <span> Hello there! </span><br>
+                                            <p class="helpline">Need Help? Drop us an email !</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+        </div>
+        
+        <div class="support-form{f:if(condition: supportSubmitted, then: ' is-success')}" id="supportForm" style="display: {f:if(condition: supportSubmitted, then: 'block', else: 'none')};">
+            <div class="support-form-head">
+                <p class="paragraph">miniOrange Support</p>
+                <span id="closeSupportForm" class="close-btn">✖</span>
+            </div>
+        
+            <form id="modal_support_form" method="post" action="">
+                <div class="support-form-body">
+                    <div id="contactForm_inside">
+                        <label for="modal_email">Contact E-mail</label>
+                        <input type="email" id="modal_email" name="email" placeholder="Enter valid email" required>
+            
+                        <label for="modal_phone">Contact Phone <span class="optional-label">(optional)</span></label>
+                        <input type="tel" id="modal_phone" name="phone" placeholder="Enter phone number with country code">
+            
+                        <label for="modal_query">How can we help you?</label>
+                        <textarea id="modal_query" name="query" rows="4"
+                                  placeholder="Enter your query here. We will get back to you as soon as possible via email."
+                                  required></textarea>
+            
+                        <button type="submit" id="modal_submit_btn">Submit</button>
+                    </div>
+
+                    <div id="support_success_panel" class="support-form-success" aria-live="polite">
+                        <span class="support-success-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                        <p class="support-success-text">
+                            Thanks for getting in touch! We shall get back to you shortly.
+                            If you dont hear from us within 24hours, please send a follow up mail to
+                            <strong class="support-success-email">magentosupport@xecurify.com</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <input type="hidden" name="option" value="mo_support_submit">
+                <input type="hidden" name="current_tab" id="support_current_tab" value="{tab}">
+
+                <div id="modal_support_response" class="alert support-form-response" style="display:none;"></div>
+            </form>
+        </div>
+        
+
+
+    </div>
+
+
+
+
+
+    </f:section>
+</html>

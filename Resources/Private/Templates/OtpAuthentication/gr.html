@@ -1,0 +1,295 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+    <style>
+      /* Basic Reset */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+  
+      /* Layout Styling */
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f3f4f6;
+      }
+  
+      .container {
+        width: 100%;
+        max-width: 380px;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+      }
+  
+      h2 {
+        margin-bottom: 10px;
+        color: #1f2937;
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+  
+      p {
+        margin: 2rem 0px 2rem 0px;
+        color: #4b5563;
+        font-size: 1rem;
+      }
+  
+      /* Input Styling */
+      .input-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+  
+      .input-group input {
+        width: 45px;
+        height: 50px;
+        text-align: center;
+        font-size: 1.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+  
+      .input-group input:focus {
+        outline: none;
+        border-color: #fb923c;
+        box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.3);
+      }
+  
+      /* Checkbox Styling */
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        justify-content: flex-start;
+        font-size: 0.9rem;
+        color: #4b5563;
+        text-align: left;
+      }
+  
+      .checkbox-container input[type="checkbox"] {
+        margin-right: 10px;
+        transform: scale(1.2);
+        cursor: pointer;
+      }
+  
+      /* Primary Button Styling */
+      .btn-primary {
+        display: inline-block;
+        padding: 12px 20px;
+        font-size: 1rem;
+        color: #ffffff;
+        background-color: #fb923c;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+      }
+  
+      .btn-primary:hover {
+        background-color: #f97316;
+      }
+  
+      /* Secondary Actions Styling */
+      .secondary-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        color: #fb923c;
+      }
+  
+      .secondary-actions a {
+        font-size: 0.9rem;
+        color: #fb923c;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        margin: 0 10px;
+      }
+  
+      .secondary-actions a:hover {
+        color: #f97316;
+      }
+  
+      /* Back Button Styling */
+      .back-button {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        color: #fb923c;
+        text-decoration: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+  
+      .back-button:hover {
+        color: #f97316;
+      }
+  
+      /* Help Dropdown Styling */
+      .help-dropdown {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.9rem;
+        color: #fb923c;
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 6px 12px;
+        text-decoration: none;
+        border-radius: 8px;
+        
+        transition: background-color 0.3s ease;
+      }
+  
+      .help-dropdown:hover {
+        background-color: #f3f4f6;
+        color: #f97316;
+      }
+  
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 30px;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        min-width: 160px;
+        border-radius: 8px;
+        overflow: hidden;
+        z-index: 10;
+      }
+  
+      .dropdown-content a {
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        color: #333;
+        font-size: 1rem;
+      }
+  
+      .dropdown-content a:hover {
+        background-color: #fb923c;
+        color: white;
+      }
+  
+      .help-dropdown:hover + .dropdown-content {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Back Button at Top Left -->
+      <a href="#" class="back-button" onclick="goBack()">← Back</a>
+  
+      <!-- Help Link at Top Right with Dropdown -->
+      <a href='#' class="help-dropdown">Help?</a>
+      <div class="dropdown-content">
+        <a href="#" onclick="contactAdmin()">Contact Admin</a>
+      </div>
+      <f:form action="submit" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication">
+        <p>Enter the 6-digit code we sent to your phone.</p>
+
+        <!-- Capture email from URL parameter using JavaScript -->
+        <input type="hidden" name="email" id="emailField" value="" />
+        
+        <!-- Alternative: If email is passed from controller -->
+        <f:if condition="{email}">
+          <input type="hidden" name="email" value="{email}" />
+        </f:if>
+        
+        <!-- Code Entry Inputs -->
+        <div class="input-group">
+          <f:form.textfield name="digit1" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 1'}" />
+          <f:form.textfield name="digit2" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 2'}" />
+          <f:form.textfield name="digit3" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 3'}" />
+          <f:form.textfield name="digit4" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 4'}" />
+          <f:form.textfield name="digit5" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 5'}" />
+          <f:form.textfield name="digit6" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 6'}" />
+        </div>
+  
+        <!-- Remember Device Checkbox Inline -->
+        <div class="checkbox-container">
+          <f:form.checkbox name="rememberDevice" id="rememberDevice" value="1" />
+          <label for="rememberDevice">Remember this device</label>
+        </div>
+  
+        <!-- Verify Button -->
+        <button class="btn-primary" type="submit">Verify</button>
+        
+      </f:form>
+    </div>
+  
+    <!-- JavaScript for Button Actions -->
+    <script>
+        // Get email from URL parameters and set it in the hidden field
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Set email from URL parameter on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var email = getUrlParameter('email');
+            if (email) {
+                document.getElementById('emailField').value = email;
+            }
+        });
+        
+        // Combine the code digits before form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+          const digits = Array.from(document.querySelectorAll('.input-group input[type="text"]'))
+            .map(input => input.value)
+            .join('');
+          
+          document.getElementById('combinedCode').value = digits;
+        });
+        
+        // Auto-focus and auto-tab between inputs
+        document.querySelectorAll('.input-group input').forEach((input, index, inputs) => {
+          input.addEventListener('input', function() {
+            if (this.value.length === 1 && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+          });
+          
+          input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+              inputs[index - 1].focus();
+            }
+          });
+        });
+        
+        // Back button functionality
+        function goBack() {
+            window.history.back();
+        }
+        
+        // Contact admin functionality
+        function contactAdmin() {
+            // Implement contact admin logic here
+            alert('Contact admin functionality to be implemented');
+        }
+      </script>
+  </body>
+  </html>

@@ -1,0 +1,29 @@
+{
+    "name": "miniorange/mfa",
+    "type": "typo3-cms-extension",
+    "description": "MiniOrange OTP Extension for TYPO3 providing Two-Factor Authentication (2FA) features",
+    "keywords": ["TYPO3", "extension", "OTP", "miniorange"],
+    "authors": [
+        {
+            "name": "MiniOrange",
+            "email": "info@miniorange.com"
+        }
+    ],
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": ">=8.0.0",
+        "typo3/cms-extbase": ">=8.0.0",
+        "typo3/cms-fluid": ">=8.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Miniorange\\Otp\\": "Classes/"
+        }
+    },
+    "version": "1.0.0",
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "mfa"
+        }
+    }
+}

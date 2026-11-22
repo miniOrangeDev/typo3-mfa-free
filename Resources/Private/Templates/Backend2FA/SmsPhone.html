@@ -1,0 +1,83 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Verification</title>
+</head>
+<body>
+
+    <div class="twofa-container">
+        
+        <f:if condition="{backUrl}">
+            <a href="{backUrl}" class="twofa-back">
+                <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32L109.3 224 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back
+            </a>
+        </f:if>
+
+        <h1 class="twofa-title">Two-Factor Authentication</h1>
+        <p class="twofa-subtitle">To secure your account, please provide your phone number for two-factor authentication.</p>
+
+        <f:if condition="{error}">
+            <div class="error-message">
+                <i class="fa fa-exclamation-circle"></i> {error}
+            </div>
+        </f:if>
+
+        <form action="{formAction}" method="post">
+            <input type="hidden" name="method" value="{method}" />
+            <input type="hidden" name="transactionID" value="{transactionID}" />
+            
+            <div style="text-align: left;">
+                <label style="display:block; margin-bottom: 5px; font-weight: 600; color:#333;">Phone Number</label>
+                
+                <div class="phone-input-group">
+                    <select name="countryCode" class="form-input country-code">
+                        <option value="+1">USA +1</option>
+                        <option value="+44">UK +44</option>
+                        <option value="+91">India +91</option>
+                        <option value="+86">China +86</option>
+                        <option value="+81">Japan +81</option>
+                        <option value="+49">Germany +49</option>
+                        <option value="+33">France +33</option>
+                        <option value="+39">Italy +39</option>
+                        <option value="+34">Spain +34</option>
+                        <option value="+7">Russia +7</option>
+                        <option value="+55">Brazil +55</option>
+                        <option value="+52">Mexico +52</option>
+                        <option value="+54">Argentina +54</option>
+                        <option value="+27">South Africa +27</option>
+                        <option value="+61">Australia +61</option>
+                        <option value="+31">Netherlands +31</option>
+                        <option value="+32">Belgium +32</option>
+                        <option value="+46">Sweden +46</option>
+                        <option value="+47">Norway +47</option>
+                        <option value="+45">Denmark +45</option>
+                        <option value="+358">Finland +358</option>
+                        <option value="+48">Poland +48</option>
+                        <option value="+420">Czech Republic +420</option>
+                        <option value="+36">Hungary +36</option>
+                        <option value="+30">Greece +30</option>
+                        <option value="+351">Portugal +351</option>
+                        <option value="+353">Ireland +353</option>
+                        <option value="+372">Estonia +372</option>
+                        <option value="+371">Latvia +371</option>
+                        <option value="+370">Lithuania +370</option>
+                        <option value="+421">Slovakia +421</option>
+                        <option value="+386">Slovenia +386</option>
+                        <option value="+385">Croatia +385</option>
+                        <option value="+40">Romania +40</option>
+                        <option value="+359">Bulgaria +359</option>
+                        <option value="+380">Ukraine +380</option>
+                        <option value="+375">Belarus +375</option>
+                    </select>
+                    <input type="text" name="phone" class="form-input phone-number" placeholder="Enter phone number" value="{phone}" required />
+                </div>
+            </div>
+
+            <button class="twofa-confirm-btn" type="submit">Send OTP</button>
+        </form>
+    </div>
+</body>
+</html>

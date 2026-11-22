@@ -1,0 +1,125 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+    <style>
+     .twofa-container {
+   width: 30%;
+  max-width: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 1rem;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  text-align: center;
+}
+
+.form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-input:disabled {
+            background-color: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff9100;
+            box-shadow: 0 0 0 2px rgba(255, 145, 0, 0.2);
+        }
+
+.twofa-back {
+  color: #ff9100;
+  text-decoration: none;
+  font-size: 1rem;
+  display: block;
+  font-weight: 500;
+  text-align: left;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.twofa-title {
+  font-weight: 700;
+  font-size: 1.6rem ;
+  margin-bottom: 8px;
+  margin-top: 3rem;
+}
+
+.twofa-subtitle {
+  color: #666;
+}
+
+.twofa-confirm-btn {
+  width: 100%;
+  background: #ff9100;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.13rem;
+  font-weight: 600;
+  padding: 13px 0;
+  margin-top: 18px;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px rgba(255,145,0,0.08);
+}
+
+.twofa-confirm-btn:hover {
+  background: #ff9800;
+}
+
+    </style>
+  </head>
+<div class="twofa-container">
+  <f:if condition="{backToLogin}">
+    <f:then>
+      <a href="/" class="twofa-back"><i class="fa fa-arrow-left"></i> Back</a>
+    </f:then>
+    <f:else>
+      <f:link.action action="show" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication" arguments="{method: backMethod}" class="twofa-back"><i class="fa fa-arrow-left"></i> Back</f:link.action>
+    </f:else>
+  </f:if>
+  <h1 class="twofa-title">Two-Factor Authentication</h1>
+  <p class="twofa-subtitle">To secure your account, please provide your email address for two-factor authentication.</p>
+  <f:if condition="{error}">
+    <div style="background:#ffeaea;color:#b71c1c;padding:12px 18px;border-radius:6px;margin-bottom:18px;">{error}</div>
+  </f:if>
+  <f:form action="processEmailInput" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication" method="post">
+    <input type="hidden" name="method" value="email_input" />
+    <f:form.hidden name="user_pid" value="{user_pid}" />
+    <f:form.hidden name="otp_length" value="{otp_length}" />
+    <f:form.hidden name="email_added" value="1" />
+    <div class="form-group">
+      <f:form.textfield name="email" class="form-input" placeholder="Enter your email address" required="required" type="email" />
+    </div>
+    <button class="twofa-confirm-btn" style="margin-bottom:2rem;" type="submit">Continue</button>
+  </f:form>
+</div>
+</html>

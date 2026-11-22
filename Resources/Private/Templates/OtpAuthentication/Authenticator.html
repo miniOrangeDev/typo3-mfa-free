@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{authType} Setup & Verification</title>
+    <style>
+        .twofa-container {
+             width: 30%;
+            max-width: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+        }
+
+        .twofa-back {
+            color: #ff9100;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            text-align: left;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        .twofa-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            margin-top: 3rem;
+        }
+
+        .twofa-subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .step-container {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 6px;
+            padding: 6px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: #ff9100;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .qr-section {
+            border: 2px dashed #ff9100;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fff;
+        }
+
+        .qr-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .manual-entry {
+            flex: 1;
+            text-align: left;
+        }
+
+        .manual-entry-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .secret-key {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .copy-btn {
+            background: #ff9100;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #ff9800;
+        }
+
+        .app-name {
+            color: #ff9100;
+            font-weight: 600;
+        }
+
+        .twofa-confirm-btn {
+            width: 100%;
+            background: #ff9100;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.13rem;
+            font-weight: 600;
+            padding: 13px 0;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: background 0.15s;
+            box-shadow: 0 2px 8px rgba(255,145,0,0.08);
+        }
+
+        .twofa-confirm-btn:hover {
+            background: #ff9800;
+        }
+
+        .twofa-confirm-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .auth-icon {
+            font-size: 48px;
+            color: #ff9100;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            font-size: 2rem;
+            border-radius: 6px;
+            border: 1px solid #bbb;
+            margin: 0 6px;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #ff9100;
+            box-shadow: 0 0 0 2px rgba(255, 145, 0, 0.2);
+        }
+
+        .error-message {
+            background: #ffeaea;
+            color: #b71c1c;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        .info-message {
+            background: #d4f5d4;
+            color: #222;
+            padding: 16px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        /* Hide/show sections based on phase */
+        .setup-phase {
+            display: none;
+        }
+
+        .verification-phase {
+            display: none;
+        }
+
+        .setup-phase.active {
+            display: block;
+        }
+
+        .verification-phase.active {
+            display: block;
+        }
+        .twofa-help {
+            display: block;
+            text-align: right;
+        }
+
+        /* QR Code specific styles */
+        #qrcode {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrcode img {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="twofa-container">
+        <a href="#" class="twofa-back" onclick="handleBackButton(); return false;">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+        <a href="#" class="twofa-help" onclick="contactAdmin(); return false;" style="color: #ff9100; text-decoration: none;">
+            <i class="fa fa-question-circle"></i> Need Help?
+        </a>
+
+        <f:if condition="{enrollmentBlocked}">
+            <h1 class="twofa-title">{authType}</h1>
+            <div class="error-message">{error}</div>
+        <f:else>
+        
+        <!-- Setup Phase -->
+        <div id="setupPhase" class="setup-phase">
+            <h1 class="twofa-title">Set Up {authType}</h1>
+            
+            <div class="step-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fa fa-download"></i>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 1: Download and open the <strong>{authType}</strong> app on your device.</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fa fa-qrcode"></i>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 2: Scan the QR code below or manually enter the code into the app.</div>
+                    </div>
+                </div>
+                
+                <div class="qr-section">
+                    <div class="scanner_name_text" style="display: flex; align-items: center; justify-content: space-around; gap: 3%; flex-wrap: wrap; max-width: 100%;">
+                        <input type="hidden" id="qrCodeUrlData" value="{qrCodeUrl -> f:format.raw()}" />
+                        <div class="mo2f_gauth" id="displayGAQrCodeTour" style="background: white; flex: 0 0 auto; max-width: 45%;">
+                            <input type="hidden" id="emailValue" value="{email}" />
+                            <input type="hidden" id="authType" value="{authType}" />
+                            <input type="hidden" id="issuer" value="{issuer}" />
+                            <input type="hidden" id="secret" value="{secret}" />
+                            <div id="qrcode" style="width: 150px; height: 150px; max-width: 100%; display: flex; align-items: center; justify-content: center;">
+                                <!-- QR Code will be generated here by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="scanner_text" style="background-color: #fff; padding: 10px; border-radius: 8px; text-align: center; color: #333; font-family: Arial, sans-serif; border: 2px dotted #ff8500; flex: 1; min-width: 200px; max-width: 45%;">
+                            <div style="position: relative;">
+                                <!-- Manual Entry Key with Copy Function -->
+                                <div onclick="copyKey()" style="cursor: pointer; margin-bottom: 10px;">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">Manual Entry Key:</div>
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; flex-wrap: wrap;">
+                                        <span id="manualKey" style="font-family: 'Courier New', monospace; font-weight: bold; font-size: 14px; word-break: break-all; max-width: 100%;">{secret}</span>
+                                        <div style="position: relative; display: inline-block; flex-shrink: 0;">
+                                            <i class="fas fa-copy" onclick="copyKey()" title="Copy Key" style="color: #ff8500; font-size: 14px; cursor: pointer;"></i>
+                                            <span id="copiedMessage" style="position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; display: none; margin-bottom: 5px;">Copied!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
+                                <div style="font-weight: bold; color: #333;">App Name: <span style="color:#ff8500; font-weight: bold;">miniOrange</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 3: Once you get the OTP code on your <strong>{authType}</strong>, click Next below and enter the code.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="twofa-confirm-btn" onclick="showVerificationPhase()">Next</button>
+        </div>
+
+        <!-- Verification Phase -->
+        <div id="verificationPhase" class="verification-phase">
+            
+            <h1 class="twofa-title">{authType}</h1>
+            <p class="twofa-subtitle">Enter the 6-digit code from your authenticator app</p>
+            
+            <f:if condition="{error}">
+                <f:then>
+                    <div class="error-message">{error}</div>
+                </f:then>
+                <f:else>
+                    <div class="info-message">
+                        Please enter the 6-digit code from your {authType} app to complete the verification.
+                    </div>
+                </f:else>
+            </f:if>
+            
+            <f:form action="verifyAuthenticator" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication" method="post" id="otpForm">
+                <f:form.hidden name="otp" id="otp" value="" />
+                <f:form.hidden name="user_pid" value="{user_pid}" />
+                <f:form.hidden name="email" value="{email}" />
+                <f:form.hidden name="secret" value="{secret}" />
+                <f:form.hidden name="authType" value="{authType}" />
+
+                <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;">
+                    <input type="text" name="otp1" id="otp1" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp2" id="otp2" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp3" id="otp3" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp4" id="otp4" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp5" id="otp5" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp6" id="otp6" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                </div>
+                <button class="twofa-confirm-btn" type="submit">Verify</button>
+            </f:form>
+            
+            <div style="margin-top: 20px;">
+            </div>
+        </div>
+        </f:else>
+        </f:if>
+    </div>
+
+    <script>
+        // Track current phase
+        let currentPhase = 'setup';
+
+        // Phase management
+        function showVerificationPhase() {
+            document.getElementById('setupPhase').classList.remove('active');
+            document.getElementById('verificationPhase').classList.add('active');
+            currentPhase = 'verification';
+        }
+
+        function showSetupPhase() {
+            document.getElementById('verificationPhase').classList.remove('active');
+            document.getElementById('setupPhase').classList.add('active');
+            currentPhase = 'setup';
+        }
+
+        // Smart back button handler
+        function handleBackButton() {
+            if (currentPhase === 'verification') {
+                // If we're in verification phase, go back to setup phase
+                showSetupPhase();
+            } else {
+                // If we're in setup phase, go back to previous page
+                history.back();
+            }
+        }
+
+        function copyKey() {
+            const secret = document.getElementById('manualKey').textContent;
+            navigator.clipboard.writeText(secret).then(function() {
+                const copiedMessage = document.getElementById('copiedMessage');
+                copiedMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    copiedMessage.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // Generate QR code using qrcode.js library
+        function generateQRCode() {
+            const secret = document.getElementById('manualKey').textContent;
+            const issuer = encodeURIComponent("miniOrange");
+           
+            const email = document.getElementById('emailValue').value;
+            // Create the otpauth URL for authenticator apps
+            const otpauthUrl = `otpauth://totp/${issuer}:${email}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
+            
+            // Clear existing content
+            const qrcodeElement = document.getElementById('qrcode');
+            qrcodeElement.innerHTML = '';
+            
+            // Generate QR code using qrcode.js library
+            new QRCode(qrcodeElement, {
+                text: otpauthUrl,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // Auto move to next input for verification phase
+        document.querySelectorAll('#otpForm input[type="text"]').forEach(function(input, idx, arr) {
+            input.addEventListener('input', function(e) {
+                if (this.value.length === 1 && idx < arr.length - 1) {
+                    arr[idx + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === "Backspace" && this.value === "" && idx > 0) {
+                    arr[idx - 1].focus();
+                }
+            });
+            
+            // Handle paste event to distribute OTP digits
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                var pastedData = (e.clipboardData || window.clipboardData).getData('text');
+                var otpDigits = pastedData.replace(/\D/g, '').split(''); // Remove non-digits and split
+                
+                // For authenticator, we know it's always 6 digits
+                var otpLength = 6;
+                
+                // Distribute digits across input fields
+                for (var i = 0; i < Math.min(otpDigits.length, otpLength); i++) {
+                    if (arr[i]) {
+                        arr[i].value = otpDigits[i];
+                    }
+                }
+                
+                // Focus on the last filled input or the next empty one
+                var lastFilledIndex = Math.min(otpDigits.length - 1, otpLength - 1);
+                if (arr[lastFilledIndex]) {
+                    arr[lastFilledIndex].focus();
+                }
+            });
+        });
+
+        // On form submit, merge all otp fields into hidden input
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            var otp = '';
+            for (var i = 1; i <= 6; i++) {
+                otp += (document.getElementById('otp' + i).value || '');
+            }
+            document.getElementById('otp').value = otp;
+        });
+
+        function contactAdmin() {
+            alert('Please contact your administrator for assistance with {authType} setup.');
+        }
+
+        // Initialize page state on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!document.getElementById('setupPhase')) {
+                return;
+            }
+
+            // Generate QR code when page loads
+            generateQRCode();
+            
+            // Check if there's an error message (which means we should show verification phase)
+            const errorMessage = document.querySelector('.error-message');
+            if (errorMessage) {
+                // If there's an error, show verification phase
+                showVerificationPhase();
+            } else {
+                // If no error, show setup phase
+                showSetupPhase();
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,36 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+</head>
+<body>
+<div class="twofa-container">
+  <a href="{backUrl}" class="twofa-back">
+    <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32L109.3 224 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back
+  </a>
+  <h1 class="twofa-title">Two-Factor Authentication</h1>
+  <p class="twofa-subtitle">To secure your account, please provide your email address for two-factor authentication.</p>
+  
+  <f:if condition="{error}">
+    <div style="background:#ffeaea;color:#b71c1c;padding:12px 18px;border-radius:6px;margin-bottom:18px;">{error}</div>
+  </f:if>
+
+  <form action="{formAction}" method="post">
+    
+    <input type="hidden" name="method" value="email_input" />
+    <input type="hidden" name="user_pid" value="{user_pid}" />
+    <input type="hidden" name="otp_length" value="{otp_length}" />
+    <input type="hidden" name="email_added" value="1" />
+    
+    <div class="form-group">
+      <input type="email" name="email" class="form-input" placeholder="Enter your email address" required="required" />
+    </div>
+    
+    <button class="twofa-confirm-btn" style="margin-bottom:2rem;" type="submit">Continue</button>
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication</title>
+</head>
+<body>
+    <div class="twofa-container">
+        <a href="#" class="twofa-back" onclick="history.back(); return false;">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+        
+        <h1 class="twofa-title">Two-Factor Authentication</h1>
+        <p class="twofa-subtitle">Please verify your identity to continue</p>
+        
+        <f:if condition="{error}">
+            <f:then>
+                <div class="error-message">{error}</div>
+            </f:then>
+            <f:else>
+                <div class="info-message">
+                    <i class="fa fa-info-circle"></i>
+                    Please enter the verification code from your {active_method} to complete the login.
+                </div>
+            </f:else>
+        </f:if>
+        
+        <form action="/typo3/index.php?route=miniorange_otp" method="post" id="otpForm">
+            <input type="hidden" name="otp" id="otp" value="" />
+            <input type="hidden" name="username" value="{username}" />
+            <input type="hidden" name="email" value="{email}" />
+            <input type="hidden" name="active_method" value="{active_method}" />
+            <input type="hidden" name="phone" value="{phone}" />
+            <input type="hidden" name="user_pid" value="{user_pid}" />
+            <input type="hidden" name="transactionID" value="{transactionID}" />
+            <input type="hidden" name="secret" value="{secret}" />
+            <input type="hidden" name="otp_length" id="otp_length" value="{otp_length}" />
+
+            <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;">
+                <f:for each="{0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:8,8:9,9:10}" as="i" iteration="iteration">
+                      <f:if condition="{i} <= {otp_length}">
+                          <input type="text" class="otp-input" name="otp{i}" id="otp{i}" maxlength="1" style="width:48px;height:48px;text-align:center;font-size:2rem;" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                      </f:if>
+                  </f:for>
+            </div>
+            
+            <button class="twofa-confirm-btn" type="submit">Verify & Login</button>
+        </form>
+
+        <!-- show resend code button only if active_method is sms or sms_and_email or email -->
+        <f:if condition="{active_method} == 'sms' || {active_method} == 'sms_and_email' || {active_method} == 'email'">
+        <form action="/typo3/index.php?route=miniorange_otp" method="post" id="resendExistingUserOtp">
+            <input type="hidden" name="otp" id="otp" value="" />
+            <input type="hidden" name="username" value="{username}" />
+            <input type="hidden" name="email" value="{email}" />
+            <input type="hidden" name="active_method" value="{active_method}" />
+            <input type="hidden" name="phone" value="{phone}" />
+            <input type="hidden" name="user_pid" value="{user_pid}" />
+            <input type="hidden" name="transactionID" value="{transactionID}" />
+            <input type="hidden" name="secret" value="{secret}" />
+            <input type="hidden" name="resend_otp" value="1" />
+            <button type="submit" style="background:none;border:none;padding:0;color:#ff9100;display:block;text-align:left;margin-top:2rem;cursor:pointer;font-size: 1rem;"><i class="fa fa-refresh"></i> Resend Code</button>
+            </form>
+        </f:if>
+        
+    </div>
+
+    <script src="{f:uri.resource(path: 'JavaScript/Backend2FA-otp.js', extensionName: 'mfa')}"></script>
+</body>
+</html>

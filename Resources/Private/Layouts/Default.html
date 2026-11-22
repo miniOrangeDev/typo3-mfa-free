@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<head>
+    <f:be.pageRenderer />
+    <title><f:render section="title" /></title>
+    <!-- FontAwesome CSS - Multiple sources to ensure loading -->
+    <link rel="stylesheet" href="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Css/otp/font-awesome.min.css')}" />
+    <link rel="stylesheet" href="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Css/otp/bootstrap.min.css')}" />
+    <link rel="stylesheet" href="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Css/otp/tailwind.min.css')}" />
+    <link rel="stylesheet" href="{f:uri.resource(path: 'EXT:mfa/Resources/Public/Css/otp/main.css')}" />
+    <script src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/JavaScript/otp/jquery.min.js')}" ></script>
+    <script src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/JavaScript/otp/bootstrap.min.js')}" ></script>
+    <script src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/JavaScript/otp/main.js')}" ></script>
+    <script src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/JavaScript/otp/userManagement.js')}" ></script>
+    <script src="{f:uri.resource(path: 'EXT:mfa/Resources/Public/JavaScript/otp/supportForm.js')}" ></script>
+            <f:render section="head" optional="true" />
+</head>
+<body>
+    <f:render section="content"/>
+</body>
+
+</html>

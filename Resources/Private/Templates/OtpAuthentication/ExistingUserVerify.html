@@ -1,0 +1,253 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication</title>
+    <style>
+        .twofa-container {
+            width: 30%;
+            max-width: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 1rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+        }
+
+        .twofa-back {
+            color: #ff9100;
+            text-decoration: none;
+            font-size: 1rem;
+            display: block;
+            font-weight: 500;
+            text-align: left;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        .twofa-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            margin-top: 3rem;
+        }
+
+        .twofa-subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-icon {
+            color: #ff9100;
+            width: 20px;
+        }
+
+        .user-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .method-info {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff9100;
+        }
+
+        .method-icon {
+            color: #ff9100;
+            margin-right: 8px;
+        }
+
+        .otp-input {
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            font-size: 2rem;
+            border-radius: 6px;
+            border: 1px solid #bbb;
+            margin: 0 6px;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #ff9100;
+            box-shadow: 0 0 0 2px rgba(255, 145, 0, 0.2);
+        }
+
+        .error-message {
+            background: #ffeaea;
+            color: #b71c1c;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        .info-message {
+            background: #d4f5d4;
+            color: #222;
+            padding: 16px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        .twofa-confirm-btn {
+            width: 100%;
+            background: #ff9100;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.13rem;
+            font-weight: 600;
+            padding: 13px 0;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: background 0.15s;
+            box-shadow: 0 2px 8px rgba(255,145,0,0.08);
+        }
+
+        .twofa-confirm-btn:hover {
+            background: #ff9800;
+        }
+
+        .twofa-help {
+            display: block;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="twofa-container">
+        <!-- 
+            This line creates a "Back" link styled with the class "twofa-back". 
+            When clicked, it uses JavaScript's history.back() to navigate the user to the previous page, 
+            and prevents the default link behavior by returning false.
+        -->
+        <a href="#" class="twofa-back" onclick="history.back(); return false;">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+        <a href="#" class="twofa-help" onclick="contactAdmin(); return false;" style="color: #ff9100; text-decoration: none;">
+            <i class="fa fa-question-circle"></i> Need Help?
+        </a>
+        
+        <h1 class="twofa-title">Two-Factor Authentication</h1>
+        <p class="twofa-subtitle">Please verify your identity to continue</p>
+        
+        <f:if condition="{error}">
+            <f:then>
+                <div class="error-message">{error}</div>
+            </f:then>
+            <f:else>
+                <div class="info-message">
+                    <i class="fa fa-info-circle"></i>
+                    Please enter the verification code from your {active_method} to complete the login.
+                </div>
+            </f:else>
+        </f:if>
+        
+        <f:form action="verifyExistingUser" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication" method="post" id="otpForm">
+            <f:form.hidden name="otp" id="otp" value="" />
+            <f:form.hidden name="username" value="{username}" />
+            <f:form.hidden name="email" value="{email}" />
+            <f:form.hidden name="active_method" value="{active_method}" />
+            <f:form.hidden name="phone" value="{phone}" />
+            <f:form.hidden name="user_pid" value="{user_pid}" />
+            <f:form.hidden name="transactionID" value="{transactionID}" />
+            <f:form.hidden name="secret" value="{secret}" />
+            <f:form.hidden name="otp_length" id="otp_length" value="{otp_length}" />
+
+            <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;">
+                <f:for each="{0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:8,8:9,9:10}" as="i" iteration="iteration">
+                      <f:if condition="{i} <= {otp_length}">
+                          <input type="text" class="otp-input" name="otp{i}" id="otp{i}" maxlength="1" style="width:48px;height:48px;text-align:center;font-size:2rem;" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                      </f:if>
+                  </f:for>
+            </div>
+            
+            <button class="twofa-confirm-btn" type="submit">Verify & Login</button>
+        </f:form>
+
+        
+    </div>
+
+    <script>
+        // Auto move to next input for OTP
+        document.querySelectorAll('#otpForm input[type="text"]').forEach(function(input, idx, arr) {
+            input.addEventListener('input', function(e) {
+                if (this.value.length === 1 && idx < arr.length - 1) {
+                    arr[idx + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === "Backspace" && this.value === "" && idx > 0) {
+                    arr[idx - 1].focus();
+                }
+            });
+            
+            // Handle paste event to distribute OTP digits
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                var pastedData = (e.clipboardData || window.clipboardData).getData('text');
+                var otpDigits = pastedData.replace(/\D/g, '').split(''); // Remove non-digits and split
+                
+                // For existing user verify, we know it's always 6 digits
+                var otpLength = 6;
+                
+                // Distribute digits across input fields
+                for (var i = 0; i < Math.min(otpDigits.length, otpLength); i++) {
+                    if (arr[i]) {
+                        arr[i].value = otpDigits[i];
+                    }
+                }
+                
+                // Focus on the last filled input or the next empty one
+                var lastFilledIndex = Math.min(otpDigits.length - 1, otpLength - 1);
+                if (arr[lastFilledIndex]) {
+                    arr[lastFilledIndex].focus();
+                }
+            });
+        });
+
+        // On form submit, merge all otp fields into hidden input
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            var otp = '';
+            var otp_length = document.getElementById('otp_length').value;
+            for (var i = 1; i <= otp_length; i++) {
+                otp += (document.getElementById('otp' + i).value || '');
+            }
+            document.getElementById('otp').value = otp;
+        });
+
+        function contactAdmin() {
+            alert('Please contact your administrator for assistance.');
+        }
+    </script>
+</body>
+</html>

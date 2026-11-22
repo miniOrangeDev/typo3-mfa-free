@@ -1,0 +1,138 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{authType} Setup & Verification</title>
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+</head>
+<body>
+    <div class="twofa-container">
+        <a href="{backUrl}" class="twofa-back">
+            <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32L109.3 224 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back
+        </a>
+        
+        <input type="hidden" id="isConfigured" value="{isConfigured}" />
+
+        <f:if condition="{enrollmentBlocked}">
+            <h1 class="twofa-title">{authType}</h1>
+            <div class="error-message">{error}</div>
+        <f:else>
+
+        <div id="setupPhase" class="setup-phase">
+            <h1 class="twofa-title">Set Up {authType}</h1>
+            
+            <div class="step-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 1: Download and open the <strong>{authType}</strong> app on your device.</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 80C0 53.5 21.5 32 48 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80zM64 96v64h64V96H64zM0 336c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V336zm64 16v64h64V352H64zM304 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H304c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48zm48 64v64h64V96H352zM256 304c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H272c-8.8 0-16-7.2-16-16zM368 288c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16zM256 432c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H272c-8.8 0-16-7.2-16-16zM368 416c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16s-16-7.2-16-16V432c0-8.8 7.2-16 16-16zM432 304c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16z"/></svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 2: Scan the QR code below or manually enter the code into the app.</div>
+                    </div>
+                </div>
+                
+                <div class="qr-section">
+                    <div class="scanner-name-text">
+                        <input type="hidden" id="qrCodeUrlData" value="{qrCodeUrl -> f:format.raw()}" />
+                        <div class="mo2f-gauth" id="displayGAQrCodeTour">
+                            <input type="hidden" id="emailValue" value="{email}" />
+                            <input type="hidden" id="authType" value="{authType}" />
+                            <input type="hidden" id="issuer" value="{issuer}" />
+                            <input type="hidden" id="manualKeyHidden" value="{secret}" />
+                            <div id="qrcode">
+                                <f:if condition="{qrCodeUrl}">
+                                    <img src="{qrCodeUrl -> f:format.raw()}" alt="QR Code">
+                                </f:if>
+                            </div>
+                        </div>
+                        <div class="scanner-text">
+                            <div class="copy-key-container" id="copy-key-container">
+                                <div class="copy-key-label">Manual Entry Key:</div>
+                                <div class="manual-key-inner">
+                                    <span id="manualKey" class="manual-key-text">{secret}</span>
+                                    <div class="copy-key-icon-wrap">
+                                        <span id="copy-key-icon" class="copy-key-icon" title="Copy Key">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M208 0H332.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128h80v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z"/></svg>
+                                        </span>
+                                        <span id="copiedMessage" class="copied-message">Copied!</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
+                                <div style="font-weight: bold; color: #333;">App Name: <span style="color:#ff8500; font-weight: bold;">miniOrange</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-title">Step 3: Once you get the OTP code on your <strong>{authType}</strong>, click Next below and enter the code.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="twofa-confirm-btn" id="setup-next-btn">Next</button>
+        </div>
+
+        <div id="verificationPhase" class="verification-phase">
+            
+            <h1 class="twofa-title">{authType}</h1>
+            <p class="twofa-subtitle">Enter the 6-digit code from your authenticator app</p>
+            
+            <f:if condition="{error}">
+                <f:then>
+                    <div class="error-message">{error}</div>
+                </f:then>
+                <f:else>
+                    <div class="info-message">
+                        Please enter the 6-digit code from your {authType} app to complete the verification.
+                    </div>
+                </f:else>
+            </f:if>
+            
+            <form action="{formAction}" method="post" id="otpForm">
+                <input type="hidden" name="otp" id="otp" value="" />
+                <input type="hidden" name="user_pid" value="{user_pid}" />
+                <input type="hidden" name="email" value="{email}" />
+                <input type="hidden" name="secret" value="{secret}" />
+                <input type="hidden" name="authType" value="{authType}" />
+                <f:if condition="{method}">
+                    <input type="hidden" name="method" value="{method}" />
+                </f:if>
+                <f:if condition="{!method}">
+                    <input type="hidden" name="method" value="{authType}" />
+                </f:if>
+
+                <div class="otp-inputs-row">
+                    <input type="text" name="otp1" id="otp1" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp2" id="otp2" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp3" id="otp3" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp4" id="otp4" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp5" id="otp5" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" name="otp6" id="otp6" maxlength="1" required class="otp-input" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                </div>
+                <button class="twofa-confirm-btn" type="submit">Verify</button>
+            </form>
+            
+            <div class="otp-verify-spacer"></div>
+        </div>
+        </f:else>
+        </f:if>
+    </div>
+
+    <script src="{scriptUrl}" defer></script>
+</body>
+</html>

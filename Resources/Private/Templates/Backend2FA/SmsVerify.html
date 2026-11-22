@@ -1,0 +1,52 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+</head>
+<body>
+    <div class="twofa-container">
+        <a href="{backUrl}" class="twofa-back">
+            <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32L109.3 224 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back
+        </a>
+        <!-- <a href="#" class="twofa-help" onclick="contactAdmin(); return false;" style="color:#ff9100;cursor:pointer;">Help?</a> -->
+        
+        <h1 class="twofa-title">Two-Factor Authentication</h1>
+        
+        <f:if condition="{error}">
+            <f:then>
+                <div style="background:#FFEAEA;color:#222;padding:12px 18px;border-radius:6px;margin-bottom:18px;">{error}</div>
+            </f:then>
+            <f:else>
+                <div style="background:#d4f5d4;color:#222;padding:16px 18px;border-radius:6px;margin-bottom:18px;">
+                    The OTP has been sent to the phone number <b>{maskedPhone}</b><br>
+                    Please enter the OTP you received to validate.
+                </div>
+            </f:else>
+        </f:if>
+
+        <form action="{formAction}" method="post" id="otpForm">
+            <input type="hidden" name="method" value="SMS" />
+            <input type="hidden" name="otp" id="otp" value="" />
+            <input type="hidden" name="email" value="{email}" />
+            <input type="hidden" name="phone" value="{phone}" />
+            <input type="hidden" name="transactionID" value="{transactionID}" />
+            <input type="hidden" name="otp_length" id="otp_length" value="{otp_length}" />
+            
+            <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;">
+                <f:for each="{0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:8,8:9,9:10}" as="i" iteration="iteration">
+                    <f:if condition="{i} <= {otp_length}">
+                        <input type="text" class="otp-input" name="otp{i}" id="otp{i}" maxlength="1" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+                    </f:if>
+                </f:for>
+            </div>
+            
+            <button class="twofa-confirm-btn" type="submit">Verify</button>
+        </form>
+    </div>
+
+    <script src="{f:uri.resource(path: 'JavaScript/Backend2FA-otp.js', extensionName: 'mfa')}"></script>
+</body>
+</html>

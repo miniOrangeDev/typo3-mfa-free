@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2019-05-10T08:29:02Z"
+		product-name="mfa">
+		<header />
+		<body>
+			<trans-unit id='tx_oauth_domain_model_feoidc'>
+				<source>Feoidc</source>
+			</trans-unit>
+
+			<trans-unit id='tx_oauth_domain_model_backend2fa'>
+				<source>Backend2FA</source>
+			</trans-unit>
+
+			<trans-unit id='tx_oauth_domain_model_response'>
+				<source>Response</source>
+			</trans-unit>
+
+			<trans-unit id='tx_oauth_feoidc.name'>
+				<source>Feoidc</source>
+			</trans-unit>
+			<trans-unit id='tx_oauth_feoidc.description'>
+				<source>For Sending Request</source>
+			</trans-unit>
+
+			<trans-unit id='tx_oauth_response.name'>
+				<source>Response</source>
+			</trans-unit>
+			<trans-unit id='tx_oauth_response.description'>
+				<source>For Handling Responses</source>
+			</trans-unit>
+
+			<trans-unit id='tx_oauth_logout.name'>
+				<source>Logout</source>
+			</trans-unit>
+			<trans-unit id='tx_oauth_logout.description'>
+				<source>For Handling Logout</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

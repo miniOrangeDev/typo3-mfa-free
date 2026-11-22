@@ -1,0 +1,16 @@
+# Configuration/TsConfig/Page/All.tsconfig
+
+# Add the plugin to the new content element wizard
+mod.wizards.newContentElement.wizardItems.plugins {
+    elements {
+        mfa_otpauthentication {
+            iconIdentifier = mfa-plugin-otpauthentication
+            title = MiniOrange OTP - Authentication
+            description = Displays the OTP Authentication form from the MiniOrange OTP extension
+            tt_content_defValues {
+                CType = list
+                list_type = mfa_otpauthentication
+            }
+        }
+    }
+}

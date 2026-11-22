@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Miniorange\Otp\:
+    resource: '../Classes/*'
+
+  # Make controllers public (required for TYPO3 v13)
+  Miniorange\Otp\Controller\:
+    resource: '../Classes/Controller/*'
+    public: true
+ 

@@ -1,0 +1,175 @@
+# MiniOrange OTP Extension TypoScript Setup
+plugin.tx_mfa_otpauthentication {
+    view {
+        templateRootPaths {
+            0 = EXT:mfa/Resources/Private/Templates/
+        }
+        layoutRootPaths {
+            0 = EXT:mfa/Resources/Private/Layouts/
+        }
+        partialRootPaths {
+            0 = EXT:mfa/Resources/Private/Partials/
+        }
+    }
+    persistence {
+        storagePid = {$plugin.tx_mfa_otpauthentication.persistence.storagePid}
+    }
+    features {
+        # rewrittenPropertyMapper = 1
+    }
+    settings {
+        # Add your custom settings here
+    }
+}
+
+plugin.tx_mfa_twofactor {
+    view {
+        templateRootPaths {
+            0 = EXT:mfa/Resources/Private/Templates/
+            1 = {$plugin.tx_mfa.view.templateRootPath}
+        }
+        partialRootPaths {
+            0 = EXT:mfa/Resources/Private/Partials/
+            1 = {$plugin.tx_mfa.view.partialRootPath}
+        }
+        layoutRootPaths {
+            0 = EXT:mfa/Resources/Private/Layouts/
+            1 = {$plugin.tx_mfa.view.layoutRootPath}
+        }
+    }
+    persistence {
+        storagePid = {$plugin.tx_mfa.persistence.storagePid}
+        enableAutomaticCacheClearing = 1
+    }
+    features {
+        requireCHashArgumentForActionArguments = 0
+        skipDefaultArguments = 0
+    }
+    mvc {
+        callDefaultActionIfActionCantBeResolved = 1
+    }
+    settings {
+        availableMethods = sms,email,authenticator,whatsapp
+        defaultMethod = sms
+        otp {
+            length = 6
+            expiryMinutes = 5
+            maxAttempts = 3
+            resendCooldown = 60
+        }
+        sms {
+            enabled = 1
+            provider = twilio
+            messageTemplate = Your verification code is: {code}
+            senderId = YourApp
+        }
+        email {
+            enabled = 1
+            template = TwoFactor/Email/OtpEmail
+            subject = Your verification code
+            fromEmail = noreply@yoursite.com
+            fromName = Your App
+        }
+        authenticator {
+            enabled = 1
+            issuer = Your App
+            qrCodeSize = 200
+            secretLength = 16
+        }
+        whatsapp {
+            enabled = 1
+            provider = twilio
+            messageTemplate = Your verification code is: {code}
+        }
+        rememberDevice {
+            enabled = 1
+            durationDays = 30
+            cookieName = mo_2fa_trusted_device
+        }
+        security {
+            rateLimiting = 1
+            maxRequestsPerHour = 10
+            blockDurationMinutes = 15
+            csrfProtection = 1
+        }
+        ui {
+            autoSubmit = 1
+            showIcons = 1
+            theme = auto
+            customClass =
+        }
+        redirect {
+            successPid = 1
+            errorPid = 1
+            loginPid = 1
+        }
+    }
+}
+
+
+# Page configuration for 2FA plugin
+page {
+    includeCSS {
+        twofactor = EXT:mfa/Resources/Public/Css/TwoFactor.css
+    }
+    includeJSFooter {
+        twofactor = EXT:mfa/Resources/Public/JavaScript/TwoFactor.js
+    }
+}
+
+# Plugin configuration for TYPO3 v13
+plugin.tx_mfa = USER
+plugin.tx_mfa {
+    userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+    extensionName = Mfa
+    pluginName = TwoFactor
+    vendorName = Miniorange
+    controller = TwoFactor
+    action = show
+    switchableControllerActions {
+        TwoFactor {
+            1 = show
+            2 = selectMethod
+            3 = smsPhone
+            4 = smsVerify
+            5 = email
+            6 = authenticator
+            7 = whatsapp
+            8 = submit
+        }
+    }
+}
+
+# URL routing for clean URLs (requires site configuration)
+routeEnhancers {
+    TwoFactorAuth {
+        type: Extbase
+        extension: Mfa
+        plugin: TwoFactor
+        routes:
+            - routePath: '/2fa/{method}'
+              _controller: 'TwoFactor::show'
+              _arguments:
+                method: method
+            - routePath: '/2fa/{method}/{step}'
+              _controller: 'TwoFactor::show'
+              _arguments:
+                method: method
+                step: step
+        defaultController: 'TwoFactor::show'
+        aspects:
+            method:
+                type: StaticValueMapper
+                map:
+                    sms: sms
+                    email: email
+                    authenticator: authenticator
+                    whatsapp: whatsapp
+            step:
+                type: StaticValueMapper
+                map:
+                    phone: phone
+                    verify: verify
+                    setup: setup
+    }
+}

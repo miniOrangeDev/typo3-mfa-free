@@ -1,0 +1,57 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+  </head>
+  <body class="gr-page">
+    <div class="container">
+      <!-- Back Button at Top Left -->
+      <a href="#" class="back-button" onclick="goBack()">← Back</a>
+  
+      <!-- Help Link at Top Right with Dropdown -->
+      <a href='#' class="help-dropdown">Help?</a>
+      <div class="dropdown-content">
+        <a href="#" onclick="contactAdmin()">Contact Admin</a>
+      </div>
+      <f:form action="submit" controller="OtpAuthentication" extensionName="Mfa" pluginName="OtpAuthentication">
+        <p>Enter the 6-digit code we sent to your phone.</p>
+
+        <!-- Capture email from URL parameter using JavaScript -->
+        <input type="hidden" name="email" id="emailField" value="" />
+        
+        <!-- Alternative: If email is passed from controller -->
+        <f:if condition="{email}">
+          <input type="hidden" name="email" value="{email}" />
+        </f:if>
+        
+        <!-- Code Entry Inputs -->
+        <div class="input-group">
+          <f:form.textfield name="digit1" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 1'}" />
+          <f:form.textfield name="digit2" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 2'}" />
+          <f:form.textfield name="digit3" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 3'}" />
+          <f:form.textfield name="digit4" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 4'}" />
+          <f:form.textfield name="digit5" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 5'}" />
+          <f:form.textfield name="digit6" maxlength="1" additionalAttributes="{inputmode: 'numeric', 'aria-label': 'Verification Code Digit 6'}" />
+        </div>
+  
+        <!-- Remember Device Checkbox Inline -->
+        <div class="checkbox-container">
+          <f:form.checkbox name="rememberDevice" id="rememberDevice" value="1" />
+          <label for="rememberDevice">Remember this device</label>
+        </div>
+  
+        <!-- Verify Button -->
+        <button class="btn-primary" type="submit">Verify</button>
+        
+        <!-- Secondary Actions (with conditional Skip) -->
+        <div class="secondary-actions">
+          <a href="#" class="resend-link" onclick="resendCode()">Resend Code</a>
+        </div>
+      </f:form>
+    </div>
+
+    <script src="{f:uri.resource(path: 'JavaScript/Backend2FA-gr.js', extensionName: 'mfa')}"></script>
+  </body>
+  </html>

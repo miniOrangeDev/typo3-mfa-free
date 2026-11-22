@@ -1,0 +1,102 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+    <link rel="stylesheet" href="{f:uri.resource(path: 'Css/Backend2FA.css', extensionName: 'mfa')}">
+</head>
+<body>
+    <div class="container">
+      
+      <form action="{formAction}" method="post" id="emailForm">
+        
+        <input type="hidden" name="email" id="email" value="" />
+
+        <div class="twofa-container"> 
+          <a href="{backUrl}" class="twofa-back">
+            <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32L109.3 224 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span> Back
+        </a>
+          <h1 class="twofa-title">Two-Factor Authentication</h1>
+          <p class="twofa-subtitle">Choose one of these methods to log in</p>
+          
+          <div class="twofa-methods">
+            <f:for each="{methods}" as="method">
+               <f:switch expression="{method}">
+                 
+                 <f:case value="EMAIL">
+                   <div class="twofa-method" onclick="selectMethod('method-email')">
+                     <input type="radio" name="method" value="email" id="method-email" required />
+                     <label for="method-email" style="display:flex;align-items:center;cursor:pointer;width:100%;margin-bottom:0;">
+                       <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg></span>
+                       <div>
+                         <div class="twofa-method-title">Email</div>
+                         <div class="twofa-method-desc">Send OTP to your email</div>
+                       </div>
+                     </label>
+                   </div>
+                 </f:case>
+
+                 <f:case value="SMS">
+                   <div class="twofa-method" onclick="selectMethod('method-sms')">
+                     <input type="radio" name="method" value="sms" id="method-sms" />
+                     <label for="method-sms" style="display:flex;align-items:center;cursor:pointer;width:100%;margin-bottom:0;">
+                       <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M80 0C44.7 0 16 28.7 16 64V448c0 35.3 28.7 64 64 64H304c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H80zM64 64c0-8.8 7.2-16 16-16H304c8.8 0 16 7.2 16 16V448c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V64zM192 400a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg></span>
+                       <div>
+                         <div class="twofa-method-title">SMS</div>
+                         <div class="twofa-method-desc">Send an SMS code</div>
+                       </div>
+                     </label>
+                   </div>
+                 </f:case>
+
+                 <f:case value="SMS_EMAIL">
+                  <div class="twofa-method" onclick="selectMethod('method-sms_email')">
+                    <input type="radio" name="method" value="sms_email" id="method-sms_email" />
+                    <label for="method-sms_email" style="display:flex;align-items:center;cursor:pointer;width:100%;margin-bottom:0;">
+                      <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg></span>
+                      <div>
+                        <div class="twofa-method-title">Email and SMS</div>
+                        <div class="twofa-method-desc">Send OTP to your email and SMS</div>
+                      </div>
+                    </label>
+                  </div>
+                 </f:case>
+
+                 <f:case value="GOOGLE">
+                  <div class="twofa-method" onclick="selectMethod('method-google')">
+                    <input type="radio" name="method" value="google" id="method-google" />
+                    <label for="method-google" style="display:flex;align-items:center;cursor:pointer;width:100%;margin-bottom:0;">
+                      <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path d="M488 261.8C488 403.3 391.1 512 248 512 110.8 512 0 397.6 0 256S110.8 0 248 0c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg></span>
+                      <div>
+                        <div class="twofa-method-title">Google Authenticator</div>
+                        <div class="twofa-method-desc">Authenticator App</div>
+                      </div>
+                    </label>
+                  </div>
+                </f:case>
+
+                 <f:case value="MICROSOFT">
+                  <div class="twofa-method" onclick="selectMethod('method-microsoft')">
+                    <input type="radio" name="method" value="microsoft" id="method-microsoft" />
+                    <label for="method-microsoft" style="display:flex;align-items:center;cursor:pointer;width:100%;margin-bottom:0;">
+                      <span class="twofa-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 32h214.6v214.6H0V32zm233.4 0H448v214.6H233.4V32zM0 265.4h214.6V480H0V265.4zm233.4 0H448V480H233.4V265.4z"/></svg></span>
+                      <div>
+                        <div class="twofa-method-title">Microsoft Authenticator</div>
+                        <div class="twofa-method-desc">Authenticator App</div>
+                      </div>
+                    </label>
+                  </div>
+                </f:case>
+
+               </f:switch>
+             </f:for>
+          </div>
+          
+          <button class="twofa-confirm-btn" type="submit">Confirm Selection</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="{f:uri.resource(path: 'JavaScript/Backend2FA-show.js', extensionName: 'mfa')}"></script>
+  </body>
+</html>
